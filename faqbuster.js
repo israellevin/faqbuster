@@ -1,11 +1,19 @@
 (function(){'use strict';
     var jq = window.jQuery;
     var gotjq = function(){
-        var $ = jq;
-        var jsdata;
-        var dataroot = 'http://thedod.github.io/reply2smartid/';
-        var jsdatauri = dataroot + location.pathname.slice(1).replace(/[^a-z0-9]/gi, '_')+'.js';
-        var gotjsdata = function(){
+        var contentroot = 'http://thedod.github.io/reply2smartid/';
+        var truthmap = {
+            '/Pages/default.aspx': [
+                ["div.HPInformationTitle","איך מקבלים תעודת זהות חכמה ודרכון חכם?", "how-to-get-smart.html"]
+            ], 
+            '/GeneralInformation/Pages/FAQ.aspx': [
+                ["div.cont","הכולל אמצעים ונתונים ביומטריים", "bio-id-needs-no-db.html"],
+                ["div.cont","מדי שנה", "long-time-no-id.html"]
+            ]   
+        }
+        var truthlinks = truthmap[location.pathname];
+        if (truthlinks) {
+            var $ = jq;
             var body = $('body');
             var cover = $('<div>').css({
                 position: 'fixed',
@@ -23,9 +31,10 @@
             });
             console.log('make links');
             $.each(truthlinks, function(linkidx, link){
-                var phrase = link[0];
-                console.log("Making link: "+phrase);
-                body.find(':contains("' + phrase + '")').first().each(function(i, node){
+                var phrase = link[1];
+                var selector = link[0]+':contains("' + phrase + '")';
+                console.log("Making link: "+selector);
+                $(selector).first().each(function(i, node){
                     node = $(node);
                     node.html(node.html().replace(phrase, '<a class="faqbusterlink faqbusterlink' + linkidx + '" href="">' + phrase + '</a>'));
                 });
@@ -33,8 +42,8 @@
             console.log('bind the clicks');
             // Has to be a new each, even if it looks the same.
             $.each(truthlinks, function(linkidx, link){
-                var uri = link[1];
-                var frame = $('<iframe style="position: fixed; z-index: 100;" class="faqbusterframe" src="' + dataroot + uri + '">').hide().appendTo(body);
+                var uri = link[2];
+                var frame = $('<iframe style="position: fixed; z-index: 100;" class="faqbusterframe" src="' + contentroot + uri + '">').hide().appendTo(body);
                 body.find('a.faqbusterlink' + linkidx).click(function(e){
                     console.log('here');
                     var phrase = $(this);
