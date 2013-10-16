@@ -1,8 +1,10 @@
 (function(){'use strict';
     var jq = window.jQuery;
     var gotjq = function(){
+        var $ = jq;
         var jsdata;
-        var jsdatauri = 'http://0.0.0.0:8000/' + location.pathname.replace(/[^a-z0-9]/gi, '-');
+        var dataroot = 'http://thedod.github.io/reply2smartid/';
+        var jsdatauri = dataroot + location.pathname.slice(1).replace(/[^a-z0-9]/gi, '_')+'.js';
         var gotjsdata = function(){
             var body = $('body');
             var cover = $('<div>').css({
@@ -19,20 +21,22 @@
                 $(this).fadeOut();
                 return false;
             });
-
+            console.log('make links');
             $.each(truthlinks, function(linkidx, link){
                 var phrase = link[0];
-                body.find(':contains("' + phrase + '")').each(function(i, node){
+                console.log("Making link: "+phrase);
+                body.find(':contains("' + phrase + '")').first().each(function(i, node){
                     node = $(node);
                     node.html(node.html().replace(phrase, '<a class="faqbusterlink faqbusterlink' + linkidx + '" href="">' + phrase + '</a>'));
                 });
             });
-
+            console.log('bind the clicks');
             // Has to be a new each, even if it looks the same.
             $.each(truthlinks, function(linkidx, link){
                 var uri = link[1];
-                var frame = $('<iframe style="position: fixed; z-index: 100;" class="faqbusterframe" src="' + uri + '">').hide().appendTo(body);
+                var frame = $('<iframe style="position: fixed; z-index: 100;" class="faqbusterframe" src="' + dataroot + uri + '">').hide().appendTo(body);
                 body.find('a.faqbusterlink' + linkidx).click(function(e){
+                    console.log('here');
                     var phrase = $(this);
                     var offset = phrase.offset();
                     offset.top += phrase.height();
