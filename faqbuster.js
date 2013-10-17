@@ -2,15 +2,9 @@
     var jq = window.jQuery;
     var gotjq = function(){
         var contentroot = 'http://thedod.github.io/reply2smartid/';
-        var truthmap = {
-            '/Pages/default.aspx': [
-                ["div.HPInformationTitle","איך מקבלים תעודת זהות חכמה ודרכון חכם?", "how-to-get-smart.html"]
-            ], 
-            '/GeneralInformation/Pages/FAQ.aspx': [
-                ["div.cont","הכולל אמצעים ונתונים ביומטריים", "bio-id-needs-no-db.html"],
-                ["div.cont","מדי שנה", "long-time-no-id.html"]
-            ]   
-        }
+        // truthmap is defined as the tomodo include truthmap.js
+        // A git-maintained version (if you contrib) is at
+        // http://thedod.github.io/reply2smartid/truthmap.js
         var truthlinks = truthmap[location.pathname];
         if (truthlinks) {
             var $ = jq;
