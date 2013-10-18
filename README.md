@@ -3,17 +3,11 @@ faqbuster
 
 Add annotations as iframe tooltips.
 
-Currently hardcoded to work from localhost, so after you clone it you run
+To run this on localhost:
 
-    python -m SimpleHTTPServer;SimpleHTTPServer
+1. Run `python -m SimpleHTTPServer;SimpleHTTPServer` (will serve this folder on port 8080)
+2. Drag this bookmarklet to the toolbar:
+<a href="javascript:{var js = document.createElement('script'); js.setAttribute('type','text/javascript'); js.setAttribute('src','http://thedod.github.io/reply2smartid/truthmap.js'); document.getElementsByTagName('head')[0].appendChild(js);var js = document.createElement('script'); js.setAttribute('type','text/javascript'); js.setAttribute('src','http://0.0.0.0:8000/faqbuster.js'); document.getElementsByTagName('head')[0].appendChild(js);void(0);}">fqb</a>
+(Note that it loads the definition of `truthmap` from [http://thedod.github.io/reply2smartid/truthmap.js](http://thedod.github.io/reply2smartid/truthmap.js)),
+3. To test your code, go  [here](http://smartid.gov.il/GeneralInformation/Pages/FAQ.aspx) and click on the bookmark.
 
-Then you make sure you have a JS file with the proper name (all non alphanumericals in pathname of faq you want to bust replaced by '-') which defines the truthlinks array of phrases and the URI of the annotation, something like this:
-
-    var truthlinks = [
-        ['phrase1', 'http://www.nsa.gov'],
-        ['phrase1', 'http://www.nasa.gov']
-    ];
-
-And then you run, in the page you want to bust, the following JS as a bookmarklet:
-
-    var js = document.createElement('script'); js.setAttribute('type','text/javascript'); js.setAttribute('src','http://0.0.0.0:8000/faqbuster.js'); document.getElementsByTagName('head')[0].appendChild(js);
