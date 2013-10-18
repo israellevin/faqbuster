@@ -9,7 +9,7 @@
         if (truthlinks) {
             var $ = jq;
             var body = $('body');
-            var cover = $('<div>').css({
+            var cover = $('<div>').attr('id','faqbuster-cover').css({
                 position: 'fixed',
                 top: '0px',
                 left: '0px',
@@ -19,10 +19,11 @@
                 opacity: '0.5',
                 zIndex: '99'
             }).hide().appendTo(body).click(function(){
-                $($.find('iframe.faqbusterframe')).fadeOut();
-                $(this).fadeOut();
+                $($.find('iframe.faqbusterframe, #faqbuster-cover')).fadeOut();
                 return false;
             });
+            // Patch to hide on scroll (issue #2)
+            $(document).scroll(function() {$("iframe.faqbusterframe, #faqbuster-cover").fadeOut();});
             console.log('make links');
             $.each(truthlinks, function(linkidx, link){
                 var phrase = link[1];
