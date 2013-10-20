@@ -50,6 +50,7 @@
                     return false;
                 });
             });
+            $('a.faqbusterlink').first().click();
         };
 
         jsdata = document.createElement('script');
