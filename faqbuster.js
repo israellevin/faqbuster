@@ -1,7 +1,6 @@
 (function(){'use strict';
     var jq = window.jQuery;
     var gotjq = function(){
-        var contentroot = 'http://thedod.github.io/reply2smartid/';
         // truthmap is defined as the tomodo include truthmap.js
         // A git-maintained version (if you contrib) is at
         // http://thedod.github.io/reply2smartid/truthmap.js
@@ -31,14 +30,15 @@
                 console.log("Making link: "+selector);
                 $(selector).first().each(function(i, node){
                     node = $(node);
-                    node.html(node.html().replace(phrase, '<a class="faqbusterlink faqbusterlink' + linkidx + '" href="">' + phrase + '</a>'));
+                    node.html(node.html().replace(phrase, '<a class="faqbusterlink faqbusterlink' + linkidx + '" href="#">' + phrase + '</a>'));
                 });
             });
             console.log('bind the clicks');
             // Has to be a new each, even if it looks the same.
             $.each(truthlinks, function(linkidx, link){
                 var uri = link[2];
-                var frame = $('<iframe style="position: fixed; z-index: 100;" class="faqbusterframe" src="' + contentroot + uri + '">').hide().appendTo(body);
+                // truthroot is defined at truthmap.js
+                var frame = $('<iframe style="position: fixed; z-index: 100;" class="faqbusterframe" src="' + truthroot + uri + '">').hide().appendTo(body);
                 body.find('a.faqbusterlink' + linkidx).click(function(e){
                     console.log('here');
                     var phrase = $(this);
