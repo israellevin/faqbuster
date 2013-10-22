@@ -1,66 +1,79 @@
 (function(){'use strict';
     var jq = window.jQuery;
     var gotjq = function(){
-        // truthmap is defined as the tomodo include truthmap.js
-        // A git-maintained version (if you contrib) is at
-        // http://thedod.github.io/reply2smartid/truthmap.js
-        var truthlinks = truthmap[location.pathname];
-        if (truthlinks) {
-            var $ = jq;
-            var body = $('body');
-            var cover = $('<div>').attr('id','faqbuster-cover').css({
-                position: 'fixed',
-                top: '0px',
-                left: '0px',
-                width: '100%',
-                height: '100%',
-                background: 'black',
-                opacity: '0.5',
-                zIndex: '99'
-            }).hide().appendTo(body).click(function(){
-                $($.find('iframe.faqbusterframe, #faqbuster-cover')).fadeOut();
+        var jsdata, truthlinks, $, body, cover;
+
+        // The truthmap is supposed to be defined as the tomodo includes
+        // truthmap.js, but if it ain't we load it ourselves (from the
+        // git-maintained version) and bail till it loads.
+        if('undefined' === typeof truthmap){
+            jsdata = document.createElement('script');
+            jsdata.setAttribute('type','text/javascript');
+            jsdata.setAttribute('src', 'http://thedod.github.io/reply2smartid/truthmap.js');
+            jsdata.onreadystatechange = jsdata.onload = function(){
+                jsdata.onreadystatechange = jsdata.onload = null;
+                gotjq();
+            };
+            document.getElementsByTagName('head')[0].appendChild(jsdata);
+            return;
+        }
+
+        truthlinks = truthmap[location.pathname];
+        if('undefined' === truthlinks) return;
+
+        $ = jq;
+        body = $('body');
+        cover = $('<div id="faqbustercover">').css({
+            position: 'fixed',
+            top: '0px',
+            left: '0px',
+            width: '100%',
+            height: '100%',
+            background: 'black',
+            opacity: '0.5',
+            zIndex: '99'
+        }).hide().appendTo(body).click(function(){
+            cover.closer.fadeOut();
+            $('iframe.faqbusterframe:visible').fadeOut();
+            cover.fadeOut();
+            return false;
+        });
+        cover.closer = $('<img src="http://openiconlibrary.sourceforge.net/gallery2/open_icon_library-full/icons/png/32x32/symbols/licenses-anti-copyright.png">').css({
+            position: 'fixed',
+            top: '0px',
+            left: '0px',
+            zIndex: '101'
+        }).appendTo(body).click(function(){cover.click();});
+
+        // Patch to hide on scroll (issue #2)
+        $(document).scroll(function() {cover.click();});
+        $.each(truthlinks, function(linkidx, link){
+            var phrase = link[1];
+            var selector = link[0]+':contains("' + phrase + '")';
+            $(selector).first().each(function(i, node){
+                node = $(node);
+                node.html(node.html().replace(phrase, '<a class="faqbusterlink faqbusterlink' + linkidx + '" href="#">' + phrase + '</a>'));
+            });
+        });
+        // Has to be a new each, even if it looks the same.
+        $.each(truthlinks, function(linkidx, link){
+            var uri = link[2];
+            // truthroot is defined at truthmap.js
+            var frame = $('<iframe style="position: fixed; z-index: 100;" class="faqbusterframe" src="' + truthroot + uri + '">').hide().appendTo(body);
+            body.find('a.faqbusterlink' + linkidx).click(function(e){
+                var phrase = $(this);
+                var frameoffset = phrase.offset();
+                var closeroffset = phrase.offset();
+                frameoffset.top += phrase.height();
+                closeroffset.left += frame.width();
+                cover.fadeIn();
+                frame.css({top: '0px', left: '0px'}).offset(frameoffset).fadeIn();
+                cover.closer.css({top: '0px', left: '0px'}).offset(closeroffset).fadeIn();
                 return false;
             });
-            // Patch to hide on scroll (issue #2)
-            $(document).scroll(function() {$("iframe.faqbusterframe, #faqbuster-cover").fadeOut();});
-            console.log('make links');
-            $.each(truthlinks, function(linkidx, link){
-                var phrase = link[1];
-                var selector = link[0]+':contains("' + phrase + '")';
-                console.log("Making link: "+selector);
-                $(selector).first().each(function(i, node){
-                    node = $(node);
-                    node.html(node.html().replace(phrase, '<a class="faqbusterlink faqbusterlink' + linkidx + '" href="#">' + phrase + '</a>'));
-                });
-            });
-            console.log('bind the clicks');
-            // Has to be a new each, even if it looks the same.
-            $.each(truthlinks, function(linkidx, link){
-                var uri = link[2];
-                // truthroot is defined at truthmap.js
-                var frame = $('<iframe style="position: fixed; z-index: 100;" class="faqbusterframe" src="' + truthroot + uri + '">').hide().appendTo(body);
-                body.find('a.faqbusterlink' + linkidx).click(function(e){
-                    console.log('here');
-                    var phrase = $(this);
-                    var offset = phrase.offset();
-                    offset.top += phrase.height();
-                    frame.css({top: '0px', left: '0px'}).offset(offset);
-                    cover.fadeIn()
-                    frame.fadeIn();
-                    return false;
-                });
-            });
-            $('a.faqbusterlink').first().click();
-        };
+        });
+        $('a.faqbusterlink').first().click();
 
-        jsdata = document.createElement('script');
-        jsdata.setAttribute('type','text/javascript');
-        jsdata.setAttribute('src', jsdatauri);
-        jsdata.onreadystatechange = jsdata.onload = function(){
-            jsdata.onreadystatechange = jsdata.onload = null;
-            gotjsdata();
-        };
-        document.getElementsByTagName('head')[0].appendChild(jsdata);
     };
 
     if('undefined' === typeof jq){
