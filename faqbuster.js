@@ -1,11 +1,14 @@
 (function(){'use strict';
     var jq = window.jQuery;
     var gotjq = function(){
-        var jsdata;
-        var jsdatauri = 'http://0.0.0.0:8000/' + location.pathname.replace(/[^a-z0-9]/gi, '-');
-        var gotjsdata = function(){
+        // truthmap is defined as the tomodo include truthmap.js
+        // A git-maintained version (if you contrib) is at
+        // http://thedod.github.io/reply2smartid/truthmap.js
+        var truthlinks = truthmap[location.pathname];
+        if (truthlinks) {
+            var $ = jq;
             var body = $('body');
-            var cover = $('<div>').css({
+            var cover = $('<div>').attr('id','faqbuster-cover').css({
                 position: 'fixed',
                 top: '0px',
                 left: '0px',
@@ -15,24 +18,29 @@
                 opacity: '0.5',
                 zIndex: '99'
             }).hide().appendTo(body).click(function(){
-                $($.find('iframe.faqbusterframe')).fadeOut();
-                $(this).fadeOut();
+                $($.find('iframe.faqbusterframe, #faqbuster-cover')).fadeOut();
                 return false;
             });
-
+            // Patch to hide on scroll (issue #2)
+            $(document).scroll(function() {$("iframe.faqbusterframe, #faqbuster-cover").fadeOut();});
+            console.log('make links');
             $.each(truthlinks, function(linkidx, link){
-                var phrase = link[0];
-                body.find(':contains("' + phrase + '")').each(function(i, node){
+                var phrase = link[1];
+                var selector = link[0]+':contains("' + phrase + '")';
+                console.log("Making link: "+selector);
+                $(selector).first().each(function(i, node){
                     node = $(node);
-                    node.html(node.html().replace(phrase, '<a class="faqbusterlink faqbusterlink' + linkidx + '" href="">' + phrase + '</a>'));
+                    node.html(node.html().replace(phrase, '<a class="faqbusterlink faqbusterlink' + linkidx + '" href="#">' + phrase + '</a>'));
                 });
             });
-
+            console.log('bind the clicks');
             // Has to be a new each, even if it looks the same.
             $.each(truthlinks, function(linkidx, link){
-                var uri = link[1];
-                var frame = $('<iframe style="position: fixed; z-index: 100;" class="faqbusterframe" src="' + uri + '">').hide().appendTo(body);
+                var uri = link[2];
+                // truthroot is defined at truthmap.js
+                var frame = $('<iframe style="position: fixed; z-index: 100;" class="faqbusterframe" src="' + truthroot + uri + '">').hide().appendTo(body);
                 body.find('a.faqbusterlink' + linkidx).click(function(e){
+                    console.log('here');
                     var phrase = $(this);
                     var offset = phrase.offset();
                     offset.top += phrase.height();
@@ -42,6 +50,7 @@
                     return false;
                 });
             });
+            $('a.faqbusterlink').first().click();
         };
 
         jsdata = document.createElement('script');
