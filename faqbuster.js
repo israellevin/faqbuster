@@ -1,4 +1,6 @@
 (function(){'use strict';
+    // Change this if you want to faqbust some other site:
+    var data_url = 'http://thedod.github.io/reply2smartid/truthmap.js';
     var jq = window.jQuery;
     var gotjq = function(){
         var jsdata, truthlinks, $, body, cover;
@@ -9,7 +11,7 @@
         if('undefined' === typeof truthmap){
             jsdata = document.createElement('script');
             jsdata.setAttribute('type','text/javascript');
-            jsdata.setAttribute('src', 'http://thedod.github.io/reply2smartid/truthmap.js');
+            jsdata.setAttribute('src', data_url);
             jsdata.onreadystatechange = jsdata.onload = function(){
                 jsdata.onreadystatechange = jsdata.onload = null;
                 gotjq();
@@ -38,7 +40,7 @@
             cover.fadeOut();
             return false;
         });
-        cover.closer = $('<img src="http://openiconlibrary.sourceforge.net/gallery2/open_icon_library-full/icons/png/32x32/symbols/licenses-anti-copyright.png">').css({
+        cover.closer = $('<img src="http://openiconlibrary.sourceforge.net/gallery2/open_icon_library-full/icons/png/24x24/actions/dialog-close-2.png">').css({
             position: 'fixed',
             top: '0px',
             left: '0px',
