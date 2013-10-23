@@ -1,15 +1,17 @@
 (function(){'use strict';
+    // Default out-of-the-box truthmap url from http://is.gd/js/shtikipedia
+    var default_truthmap_url = 'http://thedod.github.io/reply2smartid/truthmap.js';
     var jq = window.jQuery;
     var gotjq = function(){
         var jsdata, truthlinks, $, body, cover;
 
-        // The truthmap is supposed to be defined as the tomodo includes
-        // truthmap.js, but if it ain't we load it ourselves (from the
-        // git-maintained version) and bail till it loads.
+        // To speed up loading, truthmap should be defined as the tomodo include
+        // truthmap.js, but if it ain't we load it ourselves (from default_truthmap_url)
+        // and bail till it loads.
         if('undefined' === typeof truthmap){
             jsdata = document.createElement('script');
             jsdata.setAttribute('type','text/javascript');
-            jsdata.setAttribute('src', 'http://thedod.github.io/reply2smartid/truthmap.js');
+            jsdata.setAttribute('src', default_truthmap_url);
             jsdata.onreadystatechange = jsdata.onload = function(){
                 jsdata.onreadystatechange = jsdata.onload = null;
                 gotjq();
@@ -19,7 +21,7 @@
         }
 
         truthlinks = truthmap[location.pathname];
-        if('undefined' === truthlinks) return;
+        if('undefined' === typeof truthlinks) return; // not loaded yet
 
         $ = jq;
         body = $('body');
@@ -38,7 +40,7 @@
             cover.fadeOut();
             return false;
         });
-        cover.closer = $('<img src="http://openiconlibrary.sourceforge.net/gallery2/open_icon_library-full/icons/png/32x32/symbols/licenses-anti-copyright.png">').css({
+        cover.closer = $('<img src="http://openiconlibrary.sourceforge.net/gallery2/open_icon_library-full/icons/png/24x24/actions/dialog-close-2.png">').css({
             position: 'fixed',
             top: '0px',
             left: '0px',
